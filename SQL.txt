@@ -1,0 +1,102 @@
+CREATE DATABASE IF NOT EXISTS AutoMarket;
+USE AutoMarket;
+
+-- 1. Table des Utilisateurs
+CREATE TABLE IF NOT EXISTS Users (
+    id_user INT PRIMARY KEY AUTO_INCREMENT,
+    nom VARCHAR(50),
+    prenom VARCHAR(50),
+    email VARCHAR(100) UNIQUE NOT NULL,
+    mdp VARCHAR(255) NOT NULL,
+    porte_monnaie DECIMAL(10, 2) DEFAULT 0.00,
+    date_inscription DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 2. Table SAE (La liste des vulnérabilités à exploiter)
+CREATE TABLE IF NOT EXISTS SAE (
+    id_flag INT PRIMARY KEY AUTO_INCREMENT,
+    nom_faille VARCHAR(100), 
+    code_flag VARCHAR(255) UNIQUE, 
+    points_flag INT DEFAULT 0,
+    level VARCHAR(50), 
+    description TEXT
+);
+
+-- 3. Table Challenges (Lien entre User et Flag trouvé)
+CREATE TABLE IF NOT EXISTS Challenges (
+    id_challenge INT PRIMARY KEY AUTO_INCREMENT,
+    id_user INT,
+    id_flag INT,
+    date_validation DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_user) REFERENCES Users(id_user) ON DELETE CASCADE,
+    FOREIGN KEY (id_flag) REFERENCES SAE(id_flag) ON DELETE CASCADE,
+    UNIQUE (id_user, id_flag)
+);
+
+-- 4. Table des Vendeurs
+CREATE TABLE IF NOT EXISTS Vendeurs (
+    id_vendeur INT PRIMARY KEY AUTO_INCREMENT,
+    nom VARCHAR(50),
+    email VARCHAR(100) UNIQUE,
+    tel VARCHAR(20),
+    mdp VARCHAR(255),
+    nbr_produits INT DEFAULT 0,
+    note DECIMAL(3, 2),
+    date_inscription DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 5. Table des Annonces
+CREATE TABLE IF NOT EXISTS Annonces (
+    id_annonce INT PRIMARY KEY AUTO_INCREMENT,
+    id_vendeur INT,
+    description TEXT,
+    prix DECIMAL(10, 2),
+    location VARCHAR(100),
+    type_annonce VARCHAR(50),
+    date_annonce DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_vendeur) REFERENCES Vendeurs(id_vendeur) ON DELETE CASCADE
+);
+
+
+-- --- PARTIE FORUM ---
+
+-- 4. Catégories du Forum
+CREATE TABLE Forum_Categories (
+    id_categorie INT PRIMARY KEY AUTO_INCREMENT,
+    titre VARCHAR(100) NOT NULL,
+    description TEXT
+);
+
+-- 5. Sujets du Forum
+CREATE TABLE Forum_Sujets (
+    id_sujet INT PRIMARY KEY AUTO_INCREMENT,
+    id_categorie INT,
+    id_auteur INT,
+    titre VARCHAR(255) NOT NULL,
+    date_creation DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_categorie) REFERENCES Forum_Categories(id_categorie) ON DELETE CASCADE,
+    FOREIGN KEY (id_auteur) REFERENCES Users(id_user) ON DELETE SET NULL
+);
+
+-- 6. Réponses du Forum
+CREATE TABLE Forum_Reponses (
+    id_reponse INT PRIMARY KEY AUTO_INCREMENT,
+    id_sujet INT,
+    id_auteur INT,
+    contenu TEXT NOT NULL,
+    date_publication DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_sujet) REFERENCES Forum_Sujets(id_sujet) ON DELETE CASCADE,
+    FOREIGN KEY (id_auteur) REFERENCES Users(id_user) ON DELETE SET NULL
+);
+
+-- 7. Messagerie Privée (Table Messages de ton dessin)
+CREATE TABLE Messages (
+    id_message INT PRIMARY KEY AUTO_INCREMENT,
+    id_expediteur INT,
+    id_destinataire INT,
+    contenu TEXT,
+    date_envoi DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_expediteur) REFERENCES Users(id_user),
+    FOREIGN KEY (id_destinataire) REFERENCES Users(id_user)
+);
+
