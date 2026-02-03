@@ -2,8 +2,8 @@
 // includes/db_connect.php
 $host = 'localhost';
 $dbname = 'AutoMarket';
-$username = 'root';
-$password = '';
+$username = 'automarket_user';
+$password = 'tplinux';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
