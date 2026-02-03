@@ -14,6 +14,7 @@
             <ul>
                 <li><a href="index.php?page=home">Accueil</a></li>
                 <li><a href="index.php?page=catalogue">Nos Voitures</a></li>
+                <li><a href="index.php?page=entretiens">Entretiens</a></li>
                 <li><a href="index.php?page=recherche_avancee">Recherche Avancée</a></li>
                 <li><a href="index.php?page=forum">Forum</a></li>
                 <li style="border: 2px solid #ff4444; background: #ffeeee; padding: 2px 8px; border-radius: 5px;">
