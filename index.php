@@ -1,5 +1,13 @@
 <?php
 // index.php
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'domain' => '', // Default domain
+    'secure' => false, // Set to true if using HTTPS
+    'httponly' => true,
+    'samesite' => 'Lax' // Important for CSRF demo: Lax allows cookies on top-level navigations (like form POSTs)
+]);
 session_start();
 
 // Simulation de connexion BDD (on l'activera plus tard)

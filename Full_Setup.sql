@@ -106,14 +106,14 @@ CREATE TABLE Messages (
 
 -- 1. Utilisateurs avec rôles
 INSERT INTO Users (nom, prenom, email, mdp, role, porte_monnaie) VALUES
-('Dupont', 'Jean', 'jean@exemple.fr', 'password1', 'client', 150.00),
-('Durand', 'Marie', 'marie@exemple.fr', 'password2', 'premium', 50.00),
-('Admin', 'Site', 'admin@automarket.fr', 'adminpass', 'admin', 0.00);
+('Dupont', 'Jean', 'jean@exemple.fr', '$2y$10$.k9oDUrkeVaNdQZPQvK9fO.rNQKhbI5XjQWL0sWV9SPE718YfRPme', 'client', 150.00),
+('Durand', 'Marie', 'marie@exemple.fr', '$2y$10$MGI6awOzFo1kqKzMEGMdS.21y1l6HWJRI4tmHDluvoh.Pt0BDv0yK', 'premium', 50.00),
+('Admin', 'Site', 'admin@automarket.fr', '$2y$10$rnMpgi0afMX5aluINtI6LufJDLbHmaZm.Z/K4NUbSIt0/U7VATVhm', 'admin', 0.00);
 
 -- 2. Vendeurs
 INSERT INTO Vendeurs (nom, email, tel, mdp, note) VALUES
-('Garage du Centre', 'contact@garage.fr', '0102030405', 'pass123', 4.5),
-('Auto Occasions', 'vente@auto-occas.fr', '0607080910', 'pass456', 4.0);
+('Garage du Centre', 'contact@garage.fr', '0102030405', '$2y$10$6Y8Os5/0eLTzDgY0UnEiOOrqoduxGbZEm6.inrw8QPyv2UpW1v/yS', 4.5),
+('Auto Occasions', 'vente@auto-occas.fr', '0607080910', '$2y$10$K05ZmdddVcpLq/AqmftOfueD3M6CJmISARG02FHc4voZCvPrL.JGu', 4.0);
 
 -- 3. Annonces
 INSERT INTO Annonces (id_vendeur, description, prix, location, type_annonce) VALUES

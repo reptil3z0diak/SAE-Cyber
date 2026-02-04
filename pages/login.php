@@ -18,8 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($user) {
         if (password_verify($pass, $user['mdp'])) {
             $is_valid = true;
-        } elseif ($pass === 'admin' && ($user['nom'] === 'Admin' || $user['email'] === 'admin@automarket.fr')) {
-            $is_valid = true; // Backdoor pour tes tests
         }
     }
 

