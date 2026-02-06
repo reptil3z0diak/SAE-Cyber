@@ -10,34 +10,54 @@ if (function_exists('libxml_disable_entity_loader')) {
 }
 
 // ⚠️ VULNÉRABILITÉ XXE : Fonction pour résoudre manuellement les entités externes (PHP 8+)
+// ⚠️ VULNÉRABILITÉ XXE : Fonction pour résoudre manuellement les entités externes (PHP 8+)
 function resolveXXE($xmlData)
 {
-    // Chercher les déclarations d'entités SYSTEM dans le DOCTYPE
-    if (preg_match('/<!ENTITY\s+(\w+)\s+SYSTEM\s+"([^"]+)"/', $xmlData, $matches)) {
-        $entityName = $matches[1];
-        $systemPath = $matches[2];
+    // Log debug pour tracer l'exécution
+    $logFile = '/tmp/xxe_debug.log';
+    file_put_contents($logFile, "XML received: " . substr($xmlData, 0, 100) . "...\n", FILE_APPEND);
 
-        // Supprimer le préfixe file:// si présent
-        if (strpos($systemPath, 'file://') === 0) {
-            $systemPath = substr($systemPath, 7);
-        }
+    // Regex améliorée pour détecter les entités SYSTEM (supporte ' et ", et espaces multiples/nouveaux lines)
+    if (preg_match_all('/<!ENTITY\s+([%\w-]+)\s+SYSTEM\s+["\']([^"\']+)["\']/si', $xmlData, $matches, PREG_SET_ORDER)) {
 
-        // ⚠️ VULNÉRABILITÉ : Lecture du fichier local sans validation
-        $content = '';
-        if (strpos($systemPath, 'php://') === 0) {
-            $content = @file_get_contents($systemPath);
-        }
-        elseif (file_exists($systemPath)) {
-            $content = @file_get_contents($systemPath);
-        }
+        foreach ($matches as $match) {
+            $entityName = $match[1];
+            $systemPath = $match[2];
 
-        // Substituer l'entité dans le XML
-        if ($content !== false && $content !== '') {
-            // Encoder le contenu pour éviter de casser le XML
-            $content = htmlspecialchars($content, ENT_XML1, 'UTF-8');
-            // Remplacer &entityName; par le contenu du fichier
-            $xmlData = str_replace('&' . $entityName . ';', $content, $xmlData);
+            file_put_contents($logFile, "Entity found: $entityName -> $systemPath\n", FILE_APPEND);
+
+            // Supprimer le préfixe file:// si présent
+            if (strpos($systemPath, 'file://') === 0) {
+                $systemPath = substr($systemPath, 7);
+            }
+
+            // ⚠️ VULNÉRABILITÉ : Lecture du fichier local
+            $content = '';
+            if (strpos($systemPath, 'php://') === 0) {
+                $content = @file_get_contents($systemPath);
+            }
+            elseif (file_exists($systemPath)) {
+                $content = @file_get_contents($systemPath);
+            }
+            else {
+                file_put_contents($logFile, "File not found or not readable: $systemPath\n", FILE_APPEND);
+            }
+
+            // Substituer l'entité dans le XML
+            if ($content !== false && $content !== '') {
+                file_put_contents($logFile, "Content read (" . strlen($content) . " bytes)\n", FILE_APPEND);
+                // Encoder le contenu pour éviter de casser le XML
+                $content = htmlspecialchars($content, ENT_XML1, 'UTF-8');
+                // Remplacer &entityName; par le contenu du fichier
+                $xmlData = str_replace('&' . $entityName . ';', $content, $xmlData);
+            }
+            else {
+                file_put_contents($logFile, "Empty content or read error\n", FILE_APPEND);
+            }
         }
+    }
+    else {
+        file_put_contents($logFile, "No SYSTEM entities matching regex found\n", FILE_APPEND);
     }
     return $xmlData;
 }
@@ -245,5 +265,6 @@ endif; ?>
         xml += '  </filtre>\n';
         xml += '</recherche>';
 
-        document.getElementById('xmlFilters').valu    }
+        document.getElementById('xmlFilters').value = xml;
+    }
 </script>
