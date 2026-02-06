@@ -11,6 +11,7 @@ if (function_exists('libxml_disable_entity_loader')) {
 
 // ⚠️ VULNÉRABILITÉ XXE : Fonction pour résoudre manuellement les entités externes (PHP 8+)
 // ⚠️ VULNÉRABILITÉ XXE : Fonction pour résoudre manuellement les entités externes (PHP 8+)
+// ⚠️ VULNÉRABILITÉ XXE : Fonction pour résoudre manuellement les entités externes (PHP 8+)
 function resolveXXE($xmlData)
 {
     // Log debug pour tracer l'exécution
