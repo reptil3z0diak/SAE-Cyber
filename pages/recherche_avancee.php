@@ -4,30 +4,41 @@
 // Cette page accepte des filtres XML et est vulnérable aux entités externes
 
 // ⚠️ VULNÉRABILITÉ : Activer le chargement des entités externes (désactivé par défaut en PHP 8+)
-// Note: libxml_disable_entity_loader() est obsolète en PHP 8+, on utilise un custom loader
+// Note: libxml_disable_entity_loader() est obsolète en PHP 8+
 if (function_exists('libxml_disable_entity_loader')) {
     @libxml_disable_entity_loader(false);
 }
 
-// ⚠️ VULNÉRABILITÉ XXE : Custom entity loader pour PHP 8+ permettant de charger des fichiers locaux
-libxml_set_external_entity_loader(function ($public, $system, $context) {
-    // Supprimer le préfixe file:// si présent
-    if (strpos($system, 'file://') === 0) {
-        $system = substr($system, 7); // Enlève "file://"
-    }
+// ⚠️ VULNÉRABILITÉ XXE : Fonction pour résoudre manuellement les entités externes (PHP 8+)
+function resolveXXE($xmlData)
+{
+    // Chercher les déclarations d'entités SYSTEM dans le DOCTYPE
+    if (preg_match('/<!ENTITY\s+(\w+)\s+SYSTEM\s+"([^"]+)"/', $xmlData, $matches)) {
+        $entityName = $matches[1];
+        $systemPath = $matches[2];
 
-    // Gérer les wrappers PHP (php://filter, etc.)
-    if (strpos($system, 'php://') === 0) {
-        return fopen($system, 'r');
-    }
+        // Supprimer le préfixe file:// si présent
+        if (strpos($systemPath, 'file://') === 0) {
+            $systemPath = substr($systemPath, 7);
+        }
 
-    // Charger les fichiers locaux
-    if (file_exists($system)) {
-        return fopen($system, 'r');
-    }
+        // ⚠️ VULNÉRABILITÉ : Lecture du fichier local sans validation
+        $content = '';
+        if (strpos($systemPath, 'php://') === 0) {
+            $content = @file_get_contents($systemPath);
+        }
+        elseif (file_exists($systemPath)) {
+            $content = @file_get_contents($systemPath);
+        }
 
-    return null;
-});
+        // Substituer l'entité dans le XML
+        if ($content !== false && $content !== '') {
+            // Remplacer &entityName; par le contenu du fichier
+            $xmlData = str_replace('&' . $entityName . ';', $content, $xmlData);
+        }
+    }
+    return $xmlData;
+}
 
 $results = [];
 $xmlData = '';
@@ -37,10 +48,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $xmlData = isset($_POST['filters']) ? $_POST['filters'] : '';
 
     if (!empty($xmlData)) {
-        // ⚠️ VULNÉRABILITÉ : Parsing XML sans désactiver les entités externes
+        // ⚠️ VULNÉRABILITÉ XXE : Résolution manuelle des entités externes
+        $resolvedXml = resolveXXE($xmlData);
+
+        // ⚠️ VULNÉRABILITÉ : Parsing XML
         $doc = new DOMDocument();
-        $doc->substituteEntities = true; // ⚠️ Active la substitution des entités (XXE)
-        $doc->loadXML($xmlData, LIBXML_NOENT | LIBXML_DTDLOAD | LIBXML_NOERROR);
+        $doc->loadXML($resolvedXml, LIBXML_NOERROR);
 
         $xpath = new DOMXPath($doc);
 
@@ -230,6 +243,5 @@ endif; ?>
         xml += '  </filtre>\n';
         xml += '</recherche>';
 
-        document.getElementById('xmlFilters').value = xml;
-    }
+        document.getElementById('xmlFilters').value = }
 </script>
