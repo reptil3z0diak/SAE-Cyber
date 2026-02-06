@@ -11,13 +11,21 @@ if (function_exists('libxml_disable_entity_loader')) {
 
 // ⚠️ VULNÉRABILITÉ XXE : Custom entity loader pour PHP 8+ permettant de charger des fichiers locaux
 libxml_set_external_entity_loader(function ($public, $system, $context) {
-    if (file_exists($system)) {
-        return fopen($system, 'r');
+    // Supprimer le préfixe file:// si présent
+    if (strpos($system, 'file://') === 0) {
+        $system = substr($system, 7); // Enlève "file://"
     }
+
     // Gérer les wrappers PHP (php://filter, etc.)
     if (strpos($system, 'php://') === 0) {
         return fopen($system, 'r');
     }
+
+    // Charger les fichiers locaux
+    if (file_exists($system)) {
+        return fopen($system, 'r');
+    }
+
     return null;
 });
 
