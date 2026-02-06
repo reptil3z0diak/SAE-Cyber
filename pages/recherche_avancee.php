@@ -16,7 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($xmlData)) {
         // ⚠️ VULNÉRABILITÉ : Parsing XML sans désactiver les entités externes
         $doc = new DOMDocument();
-        $doc->loadXML($xmlData, LIBXML_NOENT | LIBXML_DTDLOAD);
+        $doc->substituteEntities = true; // ⚠️ Active la substitution des entités (XXE)
+        $doc->loadXML($xmlData, LIBXML_NOENT | LIBXML_DTDLOAD | LIBXML_NOERROR);
 
         $xpath = new DOMXPath($doc);
 
@@ -132,54 +133,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </h3>
 
             <?php if (!empty($results)): ?>
-                <table
-                    style="width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                    <thead style="background: #343a40; color: white;">
-                        <tr>
-                            <th style="padding: 12px;">Marque</th>
-                            <th style="padding: 12px;">Modèle</th>
-                            <th style="padding: 12px;">Type</th>
-                            <th style="padding: 12px;">Prix</th>
-                            <th style="padding: 12px;">Région</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($results as $car): ?>
-                            <tr style="border-bottom: 1px solid #eee;">
-                                <td style="padding: 12px;">
-                                    <?php echo htmlspecialchars($car['marque']); ?>
-                                </td>
-                                <td style="padding: 12px;">
-                                    <?php echo htmlspecialchars($car['modele']); ?>
-                                </td>
-                                <td style="padding: 12px;">
-                                    <?php echo htmlspecialchars($car['type']); ?>
-                                </td>
-                                <td style="padding: 12px; color: green; font-weight: bold;">
-                                    <?php echo number_format($car['prix'], 0, ',', ' '); ?> €
-                                </td>
-                                <td style="padding: 12px;">
-                                    <?php echo htmlspecialchars($car['region']); ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            <?php elseif ($_SERVER['REQUEST_METHOD'] === 'POST'): ?>
-                <p style="padding: 20px; background: #f8f9fa; border-radius: 10px; text-align: center;">Aucun véhicule
-                    trouvé avec ces critères.</p>
-            <?php else: ?>
-                <p style="padding: 20px; background: #f8f9fa; border-radius: 10px; text-align: center;">Utilisez les filtres
-                    pour rechercher des véhicules.</p>
-            <?php endif; ?>
+            <table
+                style="width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <thead style="background: #343a40; color: white;">
+                    <tr>
+                        <th style="padding: 12px;">Marque</th>
+                        <th style="padding: 12px;">Modèle</th>
+                        <th style="padding: 12px;">Type</th>
+                        <th style="padding: 12px;">Prix</th>
+                        <th style="padding: 12px;">Région</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($results as $car): ?>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 12px;">
+                            <?php echo htmlspecialchars($car['marque']); ?>
+                        </td>
+                        <td style="padding: 12px;">
+                            <?php echo htmlspecialchars($car['modele']); ?>
+                        </td>
+                        <td style="padding: 12px;">
+                            <?php echo htmlspecialchars($car['type']); ?>
+                        </td>
+                        <td style="padding: 12px; color: green; font-weight: bold;">
+                            <?php echo number_format($car['prix'], 0, ',', ' '); ?> €
+                        </td>
+                        <td style="padding: 12px;">
+                            <?php echo htmlspecialchars($car['region']); ?>
+                        </td>
+                    </tr>
+                    <?php
+    endforeach; ?>
+                </tbody>
+            </table>
+            <?php
+elseif ($_SERVER['REQUEST_METHOD'] === 'POST'): ?>
+            <p style="padding: 20px; background: #f8f9fa; border-radius: 10px; text-align: center;">Aucun véhicule
+                trouvé avec ces critères.</p>
+            <?php
+else: ?>
+            <p style="padding: 20px; background: #f8f9fa; border-radius: 10px; text-align: center;">Utilisez les filtres
+                pour rechercher des véhicules.</p>
+            <?php
+endif; ?>
 
             <?php if (!empty($xmlData)): ?>
-                <div style="margin-top: 20px; background: #f5f5f5; padding: 15px; border-radius: 5px;">
-                    <strong>XML envoyé :</strong>
-                    <pre
-                        style="background: #1a1a2e; color: #00ff00; padding: 10px; border-radius: 5px; overflow-x: auto; font-size: 0.85em;"><?php echo htmlspecialchars($xmlData); ?></pre>
-                </div>
-            <?php endif; ?>
+            <div style="margin-top: 20px; background: #f5f5f5; padding: 15px; border-radius: 5px;">
+                <strong>XML envoyé :</strong>
+                <pre
+                    style="background: #1a1a2e; color: #00ff00; padding: 10px; border-radius: 5px; overflow-x: auto; font-size: 0.85em;"><?php echo htmlspecialchars($xmlData); ?></pre>
+            </div>
+            <?php
+endif; ?>
         </div>
     </div>
 </div>
