@@ -1,12 +1,12 @@
 <?php
-// pages/catalogue.php
+// pages/pieces_detachees.php
 require_once 'includes/db_connect.php';
 
-// Requête de base pour les Voitures
+// Requête de base pour les Pièces Détachées (Accessoires)
 $sql = "SELECT A.*, V.nom as vendeur_nom 
         FROM Annonces A 
         LEFT JOIN Vendeurs V ON A.id_vendeur = V.id_vendeur
-        WHERE type_annonce = 'Vente'";
+        WHERE type_annonce = 'Accessoire'";
 
 if (isset($_GET['search']) && !empty($_GET['search'])) {
     $search = $_GET['search'];
@@ -27,12 +27,12 @@ else {
 ?>
 
 <div class="catalogue-header">
-    <h2>Catalogue AutoMarket</h2>
+    <h2>Pièces Détachées</h2>
 
     <form method="GET" action="index.php" style="background: #e9e9e9; padding: 15px; border-radius: 5px;">
-        <input type="hidden" name="page" value="catalogue">
+        <input type="hidden" name="page" value="pieces_detachees">
         <label>Rechercher :</label>
-        <input type="text" name="search" placeholder="Ex: Peugeot, Pneus...">
+        <input type="text" name="search" placeholder="Ex: Pneus, Huile...">
         <button type="submit">Rechercher</button>
     </form>
     
@@ -53,7 +53,7 @@ endif; ?>
     <?php if (count($annonces) > 0): ?>
         <?php foreach ($annonces as $item): ?>
             <div class="car-card" style="border: 1px solid #ccc; padding: 15px; background: white; border-radius: 5px;">
-                <img src="https://via.placeholder.com/300x200?text=AutoMarket" style="width:100%; border-radius:3px;">
+                <img src="https://via.placeholder.com/300x200?text=Piece+Detachee" style="width:100%; border-radius:3px;">
 
                 <h3><?php echo $item['description']; ?></h3>
                 
@@ -72,7 +72,7 @@ endif; ?>
     endforeach; ?>
     <?php
 else: ?>
-        <p>Aucune annonce trouvée.</p>
+        <p>Aucune pièce trouvée.</p>
     <?php
 endif; ?>
 </div>
