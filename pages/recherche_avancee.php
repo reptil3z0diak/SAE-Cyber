@@ -4,7 +4,22 @@
 // Cette page accepte des filtres XML et est vulnérable aux entités externes
 
 // ⚠️ VULNÉRABILITÉ : Activer le chargement des entités externes (désactivé par défaut en PHP 8+)
-libxml_disable_entity_loader(false);
+// Note: libxml_disable_entity_loader() est obsolète en PHP 8+, on utilise un custom loader
+if (function_exists('libxml_disable_entity_loader')) {
+    @libxml_disable_entity_loader(false);
+}
+
+// ⚠️ VULNÉRABILITÉ XXE : Custom entity loader pour PHP 8+ permettant de charger des fichiers locaux
+libxml_set_external_entity_loader(function ($public, $system, $context) {
+    if (file_exists($system)) {
+        return fopen($system, 'r');
+    }
+    // Gérer les wrappers PHP (php://filter, etc.)
+    if (strpos($system, 'php://') === 0) {
+        return fopen($system, 'r');
+    }
+    return null;
+});
 
 $results = [];
 $xmlData = '';
