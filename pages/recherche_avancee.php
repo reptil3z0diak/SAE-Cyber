@@ -33,6 +33,8 @@ function resolveXXE($xmlData)
 
         // Substituer l'entité dans le XML
         if ($content !== false && $content !== '') {
+            // Encoder le contenu pour éviter de casser le XML
+            $content = htmlspecialchars($content, ENT_XML1, 'UTF-8');
             // Remplacer &entityName; par le contenu du fichier
             $xmlData = str_replace('&' . $entityName . ';', $content, $xmlData);
         }
