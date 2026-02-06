@@ -245,5 +245,5 @@ endif; ?>
         xml += '  </filtre>\n';
         xml += '</recherche>';
 
-        document.getElementById('xmlFilters').value = }
+        document.getElementById('xmlFilters').valu    }
 </script>
