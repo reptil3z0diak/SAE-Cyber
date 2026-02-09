@@ -6,28 +6,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $pass = $_POST['password'];
 
-    // Récupération de l'utilisateur
-    $stmt = $pdo->prepare("SELECT * FROM Users WHERE email = ?");
-    $stmt->execute([$email]);
+    // --- ZONE DE VULNÉRABILITÉ ---
+    
+    // 1. INJECTION SQL
+    // On insère directement la variable $email dans la requête.
+    // Cela permet l'injection : ' OR '1'='1
+    $sql = "SELECT * FROM Users WHERE email = '$email'";
+    
+    // On utilise query() (pas de préparation)
+    $stmt = $pdo->query($sql);
+    
+    // Petit contrôle pour voir l'erreur SQL si l'injection est mal faite
+    if ($stmt === false) {
+        die("Erreur SQL : " . print_r($pdo->errorInfo(), true)); 
+    }
+
     $user = $stmt->fetch();
 
-    // VÉRIFICATION DU MOT DE PASSE
-    // 1. On vérifie le vrai hash (password_verify)
-    // 2. OU (Astuce Labo) : Si le mot de passe est "admin" et l'user est Admin (car tes hashs insérés sont faux)
     $is_valid = false;
+
+    // 2. BYPASS D'AUTHENTIFICATION (LOGIQUE)
     if ($user) {
-        if (password_verify($pass, $user['mdp'])) {
-            $is_valid = true;
-        }
+        // Pour ton exercice : 
+        // Si la base de données renvoie un utilisateur (grâce à ton injection SQL ou un vrai email),
+        // on valide la connexion DIRECTEMENT, sans vérifier le mot de passe.
+        // Cela te permet de te connecter avec n'importe quel mot de passe si l'injection passe.
+        $is_valid = true; 
     }
 
     if ($is_valid) {
-        // Création de la session
+        // Création de la session (Réussite)
         $_SESSION['user_id'] = $user['id_user'];
         $_SESSION['username'] = $user['prenom'] . ' ' . $user['nom'];
         $_SESSION['email'] = $user['email'];
 
-        // Définition du rôle (Admin si email contient "admin" ou nom "Admin")
+        // Définition du rôle
         if (stripos($user['email'], 'admin') !== false || $user['nom'] === 'Admin') {
             $_SESSION['role'] = 'admin';
         } else {
@@ -37,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: index.php?page=home");
         exit;
     } else {
-        $error = "Identifiants incorrects.";
+        $error = "Identifiants incorrects (Aucun utilisateur trouvé).";
     }
 }
 ?>
@@ -50,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form method="POST" action="">
         <div style="margin-bottom: 10px;">
             <label>Email :</label><br>
-            <input type="email" name="email" required placeholder="admin@automarket.fr">
+            <input type="text" name="email" required placeholder="admin@automarket.fr">
         </div>
         <div style="margin-bottom: 10px;">
             <label>Mot de passe :</label><br>
