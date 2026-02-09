@@ -1,15 +1,20 @@
-CREATE DATABASE IF NOT EXISTS AutoMarket;
+DROP DATABASE IF EXISTS AutoMarket;
+CREATE DATABASE AutoMarket;
 USE AutoMarket;
 
+
 -- 1. Table des Utilisateurs
-CREATE TABLE IF NOT EXISTS Users (
+CREATE TABLE Users (
     id_user INT PRIMARY KEY AUTO_INCREMENT,
     nom VARCHAR(50),
     prenom VARCHAR(50),
     email VARCHAR(100) UNIQUE NOT NULL,
-    mdp VARCHAR(255) NOT NULL,
+    mdp VARCHAR(255) NOT NULL, -- On mettra ici les hash MD5 plus tard
     role ENUM('client', 'premium', 'vendeur', 'admin') DEFAULT 'client',
     porte_monnaie DECIMAL(10, 2) DEFAULT 0.00,
+    date_naissance DATE,
+    ville VARCHAR(100),
+    numero_cb VARCHAR(20), -- Le Flag 2
     date_inscription DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -105,10 +110,10 @@ CREATE TABLE Messages (
 -- =============================
 
 -- 1. Utilisateurs avec rôles
-INSERT INTO Users (nom, prenom, email, mdp, role, porte_monnaie) VALUES
-('Dupont', 'Jean', 'jean@exemple.fr', 'password1', 'client', 150.00),
-('Durand', 'Marie', 'marie@exemple.fr', 'password2', 'premium', 50.00),
-('Admin', 'Site', 'admin@automarket.fr', 'adminpass', 'admin', 0.00);
+INSERT INTO Users (nom, prenom, email, mdp, role, porte_monnaie, date_naissance, ville, numero_cb) VALUES
+('Dupont', 'Jean', 'jean@exemple.fr', 'password123', 'client', 150.00, '1990-05-15', 'Paris', NULL),
+('Marty', 'Premium', 'marty@premium.fr', '827ccb0eea8a706c4c34a16891f84e7b', 'premium', 50.00, '1985-10-20', 'Lyon', '4970-1234-5678-9012'),
+('Admin', 'Site', 'admin@automarket.fr', 'adminpass', 'admin', 0.00, '1980-01-01', 'Toulouse', NULL);
 
 -- 2. Vendeurs
 INSERT INTO Vendeurs (nom, email, tel, mdp, note) VALUES
@@ -152,3 +157,7 @@ INSERT INTO Forum_Reponses (id_sujet, id_auteur, contenu) VALUES
 -- 9. Messages privés
 INSERT INTO Messages (id_expediteur, id_destinataire, contenu) VALUES
 (1, 2, 'Bonjour Marie, est-ce que ton annonce est toujours disponible ?');
+
+
+ALTER TABLE Users MODIFY nom TEXT;
+ALTER TABLE Users MODIFY prenom TEXT;
