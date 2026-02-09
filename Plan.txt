@@ -1,0 +1,110 @@
+Etape 0 "connexion.php": 
+
+Faire une injection SQL pour se connecter en tant qu'utilisateur normal
+
+Flag 1 : Recupérer le flag d'utilisateur normal
+
+Etape 2-a "connexion.php" : 
+Faire une injection SQL qui permet de recupérer la table des user premium
+
+Flag 2 : numéro carte bancaire
+
+Etape 2-b "profil.php" : 
+Faire une attaque IDOR pour récupérer l'email d'un utilisateur premium
+Une fois l'email récupéré (mdp = date naisance + lieu) on fait une attaque de type brute force
+
+Flag 3 : email d'un user premium
+
+Etape 3 "forum-client.php" :
+
+Faire une xss stored pour récupérer le cookie de session du vendeur
+
+Flag 4: Récupérer le flag de la page vendeur
+
+Etape 4-a "stocks.php" :
+
+Faire une XXE sur le formulaire de filtre des stocks : faire une commande XML pour récupérer le code de la page "admin.php"
+Le code de la page "admin.php" contient des commentaires cachés dont l'email de l'admin
+
+Flag 5 : email de l'admin
+
+Etape 4-b : 
+
+On est connecté avec un compte vendeur (ex: vendeur@mail.com). En parcourant le site, on remarques que les pages de gestion sont dans un dossier appelé /vendeur/. l'administrateur a sûrement un dossier similaire, mais il n'y a aucun lien dans le menu.
+
+Le Fuzzing consiste à tester une liste massive de noms de répertoires probables pour trouver celui qui n'est pas référencé.
+
+Le Forced Browsing (CWE-425) se produit car le développeur a simplement "caché" l'URL sans vérifier si l'utilisateur qui y accède a les droits d'administrateur.
+
+On tape manuellement l'URL dans le navigateur :
+
+Flag 6 : flag de la page "cachée"
+
+Exfiltration : Récupération des mots de passe
+Puisque le site utilise un algorithme de hashage faible (MD5 - CWE-328), on va transformer ce code en texte clair.
+
+Flag 7 : mdp de l'admin
+
+
+Etape 5 "connexion.php" :
+
+On se connecte avec l'admin
+
+
+Etape 6 "admin.php" :
+
+
+Seulement l'admin peut changer de photo de profil -> on pourra charger sa photo de profil sur cette page. Après avoir modifié le
+répertoire où sera stocké la photo, l’application redimensionne la photo via une
+commande system et la fonction convert. Aucun contrôle n’est fait sur le nom
+du fichier ce qui permet de faire une injection de commande. L’objectif est de
+déterminer le répertoire où sont stockées les images avec une commande ls
+
+La fonction system() prend une chaîne de caractères et l'envoie au terminal Linux. En utilisant des séparateurs de commandes comme ;, && ou |, un attaquant peut forcer le serveur à exécuter une deuxième commande après la première.
+
+exemple : image.jpg; pwd $PWD > uploads/repertoire.txt; #
+
+Flag 8 : serie de commandes linux permetant de récup certains flags
+
+Etape 7 - SSRF : 
+
+Depuis la page admin, l'admin a un appercu sur le post sur le forum. On met un lien vers un url, il peut scanner le réseau interne avec un script grâce à cela, il va découvrir que le serveur écoute sur le port 8000 et le port 8000 donne accès à une page d'administration des super admin
+
+Flag 9 : flag de la page super admin
+
+Etape 8 - File Upload : 
+
+Reverse shell permettant de se connecter à l'user admin (pas root) qui lui même a accès à une commande qui donne le flag.
+Vérifier la liste des processus.
+
+Flag 10 : flags récups grâce aux commandes linux.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Faire un file upload : Le pentester devra upload un fichier php (image de voiture) permettant de faire un reverse shell, puis à partir de ce shell, accéder à un fichier sur la machine avec un flag à récupérer.
+
+Flag : fichier "flag.txt"
+
+
+
